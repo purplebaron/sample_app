@@ -173,4 +173,33 @@ describe "UserPages" do
       specify { expect(user.reload.email).to   eq new_email }
     end
   end
+
+  describe "patch with" do
+    let(:user) { FactoryGirl.create(:user) }
+    before do
+      sign_in user, no_capybara: true
+      visit edit_user_path(user)
+    end
+
+    describe "forbidden attributes" do
+      let(:params) do
+	{ user: { admin: true, password: user.password,
+		  password_confirmation: user.password } }
+      end
+      before { patch user_path(user), params }
+      specify { expect(user.reload).not_to be_admin }
+    end
+
+    describe "permitted attributes" do
+      let(:params) do
+        { user: { name: "New Name", password: user.password,
+                  password_confirmation: user.password } }
+      end
+      before do
+	puts user_path(user) + " " + params.to_s
+        puts patch user_path(user), params
+      end 
+      specify { expect(user.reload.name).to eq "New Name" }
+    end
+  end
 end
