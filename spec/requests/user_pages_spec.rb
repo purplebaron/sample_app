@@ -196,8 +196,8 @@ describe "UserPages" do
                   password_confirmation: user.password } }
       end
       before do
-	puts user_path(user) + " " + params.to_s
-        puts patch user_path(user), params
+	user_path(user) + " " + params.to_s
+        patch user_path(user), params
       end 
       specify { expect(user.reload.name).to eq "New Name" }
     end
