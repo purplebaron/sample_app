@@ -136,6 +136,30 @@ describe "UserPages" do
       end
     end
   end
+
+  describe "signup while signed in" do
+    let(:user) { FactoryGirl.create(:user) }
+    before { sign_in user }
+    before { visit signup_path }
+
+    it { should have_title(full_title("")) }
+    it { should_not have_title(full_title("Sign up")) }
+    # specify { expect(response.location).to redirect_to(root_url) }
+  end
+
+  describe "create a new user while signed in" do
+    let(:logged_in_user) { FactoryGirl.create(:user) }
+    before do
+      sign_in logged_in_user, no_capybara: true
+      post users_path, :user => {:name => "New User", :email => "newuser@foobar.com",
+                :password => "foobar", :password_confirmation => "foobar" }
+
+    end
+    # I don't understand redirection in this post task. ask Evan
+    # it { should have_content( "Already signed in." )} 
+    specify { expect(response.location).to redirect_to(root_path) }
+  end
+
   describe "edit" do
     let(:user) { FactoryGirl.create(:user) }
     before do
@@ -188,18 +212,6 @@ describe "UserPages" do
       end
       before { patch user_path(user), params }
       specify { expect(user.reload).not_to be_admin }
-    end
-
-    describe "permitted attributes" do
-      let(:params) do
-        { user: { name: "New Name", password: user.password,
-                  password_confirmation: user.password } }
-      end
-      before do
-	user_path(user) + " " + params.to_s
-        patch user_path(user), params
-      end 
-      specify { expect(user.reload.name).to eq "New Name" }
     end
   end
 end
