@@ -45,6 +45,18 @@ describe "UserPages" do
         end
         it { should_not have_link('delete', href: user_path(admin)) }
       end
+
+      describe "self deletion should be impossible" do
+        let(:admin) { FactoryGirl.create(:admin) }
+        before do
+          sign_in admin, no_capybara: true
+          visit users_path
+        end
+
+        before { delete user_path(admin) }
+        specify { expect(response.location).to redirect_to(user_path(admin)) }
+
+      end
     end  
   end
 
