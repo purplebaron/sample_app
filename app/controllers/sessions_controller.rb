@@ -1,5 +1,10 @@
 class SessionsController < ApplicationController
 
+  def home
+    if signed_in?
+    end
+  end
+
   def new
   end
 
